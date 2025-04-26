@@ -4,8 +4,18 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { dummyInterviews } from '@/constants'
 import InterviewCard from '@/components/InterviewCard'
+import { getCurrentUser, getInterviewsByUserId, getLatestInterviews } from '@/lib/actions/auth.action'
 
-function HomePage() {
+async function HomePage() {
+  const user = await getCurrentUser();
+  const [userInterviews, latestInterviews] = await Promise.all([
+    await getInterviewsByUserId(user?.id!),
+    await getLatestInterviews({ userId: user?.id! })
+  ]);
+
+  const hasPastInterviews = userInterviews?.length > 0;
+  const hasUpcomingInterviews = latestInterviews?.length > 0;
+
   return (
     <>
       <section className='card-cta'>
@@ -18,17 +28,19 @@ function HomePage() {
             <Link href='/interview'>Start an Interview</Link>
           </Button>
         </div>
-        <Image src="/robot.png" alt="robo-dude" width={400} height={400} className='max-sm:hidden'/>
+        <Image src="/robot.png" alt="robo-dude" width={400} height={400} className='max-sm:hidden' />
       </section>
 
       <section className='flex flex-col gap-6 mt-8'>
         <h2>Your Interviews</h2>
 
         <div className='interviews-section'>
-          {/* <p>You haven&apos;t taken any interviews yet</p> */}
-          {dummyInterviews.map((interview)=>(
-            <InterviewCard {...interview} key={interview.id}/>
-          ))}
+          {hasPastInterviews ? (
+              userInterviews?.map((interview) => (
+                <InterviewCard {...interview} key={interview.id} />
+              ))
+            ) : (<p>You haven&apos;t taken any interviews yet.</p>)
+          }
         </div>
       </section>
 
@@ -36,10 +48,12 @@ function HomePage() {
         <h2>Take an Interview</h2>
 
         <div className='interviews-section'>
-          {/* <p>There are no interviews available</p> */}
-          {dummyInterviews.map((interview)=>(
-            <InterviewCard {...interview} key={interview.id}/>
-          ))}
+          {hasUpcomingInterviews ? (
+              latestInterviews?.map((interview) => (
+                <InterviewCard {...interview} key={interview.id} />
+              ))
+            ) : (<p>There are no new interviews available.</p>)
+          }
         </div>
       </section>
     </>
