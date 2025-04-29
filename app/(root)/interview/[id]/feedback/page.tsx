@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import dayjs from 'dayjs';
+import { RouteParams } from '@/types';
 
 const page = async({ params }: RouteParams) => {
   const { id } = await params;
@@ -15,7 +16,7 @@ const page = async({ params }: RouteParams) => {
 
   const feedback = await getFeedbackByInterviewId({
     interviewId: id,
-    userId: user?.id!,
+    userId: user?.id ?? ""
   });
 
 

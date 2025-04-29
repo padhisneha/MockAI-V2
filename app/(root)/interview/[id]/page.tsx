@@ -5,6 +5,7 @@ import { getRandomInterviewCover } from "@/lib/utils";
 import DisplayTechIcons from "@/components/DisplayTechIcons";
 import Agent from "@/components/Agent";
 import { getCurrentUser } from "@/lib/actions/auth.action";
+import { RouteParams } from "@/types";
 
 const page = async ({ params }: RouteParams) => {
     const { id } = await params;
