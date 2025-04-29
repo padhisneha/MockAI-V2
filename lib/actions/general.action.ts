@@ -126,59 +126,44 @@ export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdP
 }
 
 export async function getFeedbacksByUserId(userId: string): Promise<Feedback[]> {
-    try {
-      // First, get all interviews belonging to this user
-      const interviewsSnapshot = await db.collection('interviews')
-        .where('userId', '==', userId)
-        .get();
-      
-      if (interviewsSnapshot.empty) {
-        return [];
-      }
-      
-      const interviewIds = interviewsSnapshot.docs.map(doc => doc.id);
-      
-      // Then, get all feedback that references these interview IDs
-      const feedbackPromises = interviewIds.map(async (interviewId) => {
-        const feedbackSnapshot = await db.collection('feedback')
-          .where('interviewId', '==', interviewId)
-          .get();
-        
-        if (feedbackSnapshot.empty) {
-          return [];
-        }
-        
-        return feedbackSnapshot.docs.map(doc => {
-          const data = doc.data();
-          
-          // Ensure scores are properly parsed as numbers
-          const categoryScores = Array.isArray(data.categoryScores) 
-            ? data.categoryScores.map((category: any) => ({
-                name: category.name || '',
-                score: typeof category.score === 'number' ? category.score : parseFloat(category.score) || 0,
-                comment: category.comment || ''
-              }))
-            : [];
-          
-          return {
-            id: doc.id,
-            interviewId: data.interviewId || interviewId,
-            totalScore: typeof data.totalScore === 'number' ? data.totalScore : parseFloat(data.totalScore) || 0,
-            categoryScores,
-            strengths: Array.isArray(data.strengths) ? data.strengths : [],
-            areasForImprovement: Array.isArray(data.areasForImprovement) ? data.areasForImprovement : [],
-            finalAssessment: data.finalAssessment || '',
-            createdAt: data.createdAt || new Date().toISOString()
-          } as Feedback;
-        });
-      });
-      
-      const feedbackResults = await Promise.all(feedbackPromises);
-      
-      // Flatten the array of arrays into a single array of feedback
-      return feedbackResults.flat();
-    } catch (error) {
-      console.error('Error fetching feedbacks by user ID:', error);
+  try {
+    // Directly query feedbacks where userId matches the provided userId
+    const feedbackSnapshot = await db.collection('feedback')
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .get();
+    
+    if (feedbackSnapshot.empty) {
       return [];
     }
+    
+    // Map the feedback documents to Feedback objects
+    return feedbackSnapshot.docs.map(doc => {
+      const data = doc.data();
+      
+      // Ensure scores are properly parsed as numbers
+      const categoryScores = Array.isArray(data.categoryScores) 
+        ? data.categoryScores.map((category: any) => ({
+            name: category.name || '',
+            score: typeof category.score === 'number' ? category.score : parseFloat(category.score) || 0,
+            comment: category.comment || ''
+          }))
+        : [];
+      
+      return {
+        id: doc.id,
+        interviewId: data.interviewId || '',
+        userId: data.userId || userId,
+        totalScore: typeof data.totalScore === 'number' ? data.totalScore : parseFloat(data.totalScore) || 0,
+        categoryScores,
+        strengths: Array.isArray(data.strengths) ? data.strengths : [],
+        areasForImprovement: Array.isArray(data.areasForImprovement) ? data.areasForImprovement : [],
+        finalAssessment: data.finalAssessment || '',
+        createdAt: data.createdAt || new Date().toISOString()
+      } as Feedback;
+    });
+  } catch (error) {
+    console.error('Error fetching feedbacks by user ID:', error);
+    return [];
   }
+}
