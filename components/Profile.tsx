@@ -239,7 +239,7 @@ export default function Profile({ user, feedbacks }: ProfileProps) {
               
               <h3 className="text-xl font-semibold text-center mb-3 text-primary-100">No Interviews Yet</h3>
               <p className="text-light-400 text-center mb-6">
-                You haven't completed any interviews yet. Start an interview to get personalized feedback on your performance.
+                You haven&apos;t completed any interviews yet. Start an interview to get personalized feedback on your performance.
               </p>
               
               <button 

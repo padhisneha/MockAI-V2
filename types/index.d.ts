@@ -173,3 +173,79 @@ export const dsaTags = [
 ];
 
 
+// Resume related types
+interface Resume {
+  id: string;
+  userId: string;
+  name: string;
+  personal: {
+    fullName: string;
+    email: string;
+    phone: string;
+    location: string;
+    website?: string;
+    linkedin?: string;
+    github?: string;
+  };
+  professionalSummary: string;
+  education: EducationEntry[];
+  experience: ExperienceEntry[];
+  skills: string[];
+  projects: ProjectEntry[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface EducationEntry {
+  id: string;
+  institution: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: string;
+  endDate: string;
+  location?: string;
+  description?: string;
+}
+
+interface ExperienceEntry {
+  id: string;
+  company: string;
+  position: string;
+  startDate: string;
+  endDate: string;
+  location?: string;
+  description: string;
+  bullets: string[];
+}
+
+interface ProjectEntry {
+  id: string;
+  name: string;
+  description: string;
+  technologies: string[];
+  link?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+// Resume action params
+interface CreateResumeParams {
+  userId: string;
+  name: string;
+}
+
+interface UpdateResumeParams {
+  resumeId: string;
+  userId: string;
+  data: Partial<Resume>;
+}
+
+interface DeleteResumeParams {
+  resumeId: string;
+  userId: string;
+}
+
+interface GetResumeParams {
+  resumeId: string;
+  userId: string;
+}

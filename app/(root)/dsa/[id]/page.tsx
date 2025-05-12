@@ -144,7 +144,7 @@ export default function DSAQuestionPage() {
         {/* Right panel with Interview Call and Problem Description - Takes 2/5 of the space */}
         <div className="lg:col-span-2 flex flex-col gap-4">
           {/* Interview Call Section using DSAAgent */}
-          <div className="border border-gray-200 rounded-lg shadow-sm p-4 bg-gray-50">
+          <div className="border border-gray-200 rounded-lg shadow-sm p-4 bg-gray-700">
             {user && question && (
               <DSAAgent
                 userName={user.name || 'User'}
@@ -167,11 +167,11 @@ export default function DSAQuestionPage() {
               <h3 className="font-semibold mb-2">Example Test Cases:</h3>
               <div className="space-y-2">
                 {question.testCases.map((testCase, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-md">
+                  <div key={index} className="bg-gray-700 p-3 rounded-md">
                     <p className="font-medium">Input: <code>{testCase.input}</code></p>
                     <p className="font-medium">Output: <code>{testCase.output}</code></p>
                     {testCase.explanation && (
-                      <p className="text-sm text-gray-600 mt-1">Explanation: {testCase.explanation}</p>
+                      <p className="text-sm text-gray-100 mt-1">Explanation: {testCase.explanation}</p>
                     )}
                   </div>
                 ))}
